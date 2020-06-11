@@ -7,7 +7,6 @@
 class ibs_service
 {
 public:
-    ibs_service();
     int8_t read();
     int8_t bruteforceRead();
     int8_t write();
