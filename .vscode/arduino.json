@@ -1,0 +1,5 @@
+{
+    "port": "/dev/cu.usbmodem143201",
+    "board": "arduino:mbed:nano33ble",
+    "sketch": "PJMonitor.ino"
+}

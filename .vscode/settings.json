@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "cstddef": "cpp",
+        "__config": "cpp",
+        "__cxx_version": "cpp",
+        "atomic": "cpp",
+        "bitset": "cpp",
+        "locale": "cpp",
+        "type_traits": "cpp",
+        "algorithm": "cpp",
+        "mstd_type_traits": "cpp",
+        "*.tcc": "cpp",
+        "fstream": "cpp"
+    }
+}
