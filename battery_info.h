@@ -2,12 +2,12 @@
 #define BATTERY_INFO_H
 
 struct batteryInfo {
-  byte isBatteryInfoValid = 0;
-  int cntRecvInvalidMsgs = 0;
-  byte SoC;
-  byte SoH;
-  byte batteryTemp;
-  byte availCap;
+  uint8_t isBatteryInfoValid = 0;
+  int8_t cntRecvInvalidMsgs = 0;
+  uint8_t SoC;
+  uint8_t SoH;
+  uint8_t batteryTemp;
+  uint8_t availCap;
   float U_Voltage;
   float I_Current;
 };
