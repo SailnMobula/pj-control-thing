@@ -1,10 +1,12 @@
 #include "lin_driver.h"
 
-lin_driver::lin_driver() {
+lin_driver::lin_driver()
+{
     lin_driver(defaultBaudrate);
 }
 
-lin_driver::lin_driver(uint32_t baudrate) {
+lin_driver::lin_driver(uint32_t baudrate)
+{
     Serial1.begin(baudrate);
 }
 
