@@ -1,7 +1,8 @@
 #include "timed_service.h"
+#include <Arduino.h>
 
-timed_service::timed_service(uint32_t frequency) {
-    cycleTimeMicroseconds = 1000000 / frequency / 100;
+timed_service::timed_service(uint32_t intervalInMicros) {
+  this->intervalInMicros = intervalInMicros;
 }
 
 timed_service::~timed_service() {}
@@ -9,7 +10,7 @@ timed_service::~timed_service() {}
 bool timed_service::isTimeSlotActive() {
   unsigned long currentMicros = micros();
 
-  if (getCurrentInterval() > cycleTimeMicroseconds) {
+  if (getCurrentInterval() > intervalInMicros) {
     previousMicros = currentMicros;
     return true;
   }
@@ -23,9 +24,10 @@ uint32_t timed_service::getCurrentInterval() {
 }
 
 uint32_t timed_service::getCallsPerMillis() {
-    return 1000/cycleTimeMicroseconds;
+  // Serial.println(intervalInMicros);
+  return 1000 / intervalInMicros;
 }
 
 uint32_t timed_service::getCallsPerSecond() {
-    return 1000*1000/cycleTimeMicroseconds;
+  return 1000 * 1000 / intervalInMicros;
 }

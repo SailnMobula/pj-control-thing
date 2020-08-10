@@ -1,14 +1,20 @@
 #include "led_service.h"
 
-led_service::led_service(uint32_t frequency, uint8_t outputPin, uint32_t fadeTimeMillis) : timed_service(frequency) {
+led_service::led_service(float frequency, uint8_t outputPin,
+                         uint32_t fadeTimeMillis)
+    : timed_service(calcDutyCycleLsbInterval(frequency)) {
   ledOutputPin = outputPin;
   pinMode(ledOutputPin, OUTPUT);
   digitalWrite(ledOutputPin, LOW);
-  fadeConstant = (float)DUTY_CYCLE_MAX/(float)getCallsPerMillis()/(float)fadeTimeMillis;
-
+  fadeConstant = (float)DUTY_CYCLE_MAX / (float)getCallsPerMillis() /
+                 (float)fadeTimeMillis;
 }
 
 led_service::~led_service() {}
+
+uint32_t led_service::calcDutyCycleLsbInterval(float frequency) {
+  return (1000 * 1000) / frequency / DUTY_CYCLE_MAX;
+}
 
 uint32_t led_service::limitDutyCycle(uint32_t dutyCycle) {
   if (dutyCycle > DUTY_CYCLE_MAX) {

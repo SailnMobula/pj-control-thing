@@ -5,11 +5,11 @@
 
 class timed_service {
 private:
-  uint32_t cycleTimeMicroseconds = 0;
+  uint32_t intervalInMicros = 0;
   uint32_t previousMicros = 0;
 
 public:
-  timed_service(uint32_t frequency);
+  timed_service(uint32_t intervalInMicros);
   ~timed_service();
 
   boolean isTimeSlotActive();
