@@ -31,6 +31,7 @@ public:
   void turnOff();
   void turnOnByDutyCycle(uint32_t dutyCycle);
   void controlLed();
+  float getCurrentDutyCycle();
 };
 
 #endif

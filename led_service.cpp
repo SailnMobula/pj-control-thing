@@ -30,15 +30,15 @@ uint32_t led_service::limitDutyCycle(uint32_t dutyCycle) {
 
 float led_service::getCalculatedFadedDutyCycle() {
   const uint32_t tmpTarget = targetDutyCycle;
+  const uint32_t tmpCurrent = currentDutyCycle;
 
-  if (currentDutyCycle == tmpTarget) {
+  if (tmpCurrent == tmpTarget) {
     return tmpTarget;
   }
-  if (currentDutyCycle < tmpTarget) {
-
+  if (tmpCurrent < tmpTarget) {
     return currentDutyCycle + fadeConstant;
   }
-  if (currentDutyCycle > tmpTarget) {
+  if (tmpCurrent > tmpTarget) {
     return currentDutyCycle - fadeConstant;
   }
 }
@@ -50,6 +50,8 @@ float led_service::determineCurrentDutyCycle() {
     return getCalculatedFadedDutyCycle();
   }
 }
+
+float led_service::getCurrentDutyCycle() { return currentDutyCycle; }
 
 void led_service::turnOn() {
   shouldFade = true;
