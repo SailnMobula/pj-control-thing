@@ -23,10 +23,7 @@ uint32_t timed_service::getCurrentInterval() {
   return currentMicros - previousMicros;
 }
 
-uint32_t timed_service::getCallsPerMillis() {
-  // Serial.println(intervalInMicros);
-  return 1000 / intervalInMicros;
-}
+uint32_t timed_service::getCallsPerMillis() { return 1000 / intervalInMicros; }
 
 uint32_t timed_service::getCallsPerSecond() {
   return 1000 * 1000 / intervalInMicros;
