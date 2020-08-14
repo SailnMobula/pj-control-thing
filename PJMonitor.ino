@@ -9,6 +9,7 @@
 
 int ledState = LOW;
 int previousBatteryLevel = 0;
+int previousBatteryVoltage = 0;
 int previousLedDutyCycle = 0;
 uint32_t ledServiceState = 1;
 
@@ -16,9 +17,14 @@ led_service ledService(200, 2, 1000);
 timed_service longTimedService((uint32_t)5000 * 1000);
 timed_service shortTimedService((uint32_t)1 * 1000);
 
-BLEService bleBatteryService("180F");
-BLEUnsignedCharCharacteristic batteryLevelCharacteristic("2A19",
-                                                         BLERead | BLENotify);
+BLEService bleBatteryService("9f832063-bbe1-45b2-b9cb-b4c7b2a0c36a");
+BLEUnsignedCharCharacteristic
+    batteryLevelCharacteristic("cd3d8382-99b8-434e-b221-74d18e68df9a",
+                               BLERead | BLENotify);
+
+BLEUnsignedCharCharacteristic
+    batteryVoltageCharacteristic("d5e05399-8d79-40bd-afaf-db7b63eb6035",
+                                 BLERead | BLENotify);
 
 BLEService bleLedService("98194a8e-a697-4b49-93f5-25ca2602013c");
 BLEUnsignedCharCharacteristic
@@ -40,6 +46,7 @@ void bleInit() {
 
   BLE.setAdvertisedService(bleBatteryService);
   bleBatteryService.addCharacteristic(batteryLevelCharacteristic);
+  bleBatteryService.addCharacteristic(batteryVoltageCharacteristic);
   BLE.addService(bleBatteryService);
 
   BLE.setAdvertisedService(bleLedService);
@@ -68,27 +75,49 @@ void blinkLED() {
   digitalWrite(LED_BUILTIN, ledState);
 }
 
-void handleBLE(BLEDevice central, uint8_t currentLedDutyCycle) {
-  if (central) {
-    if (central.connected()) {
+void bleSendDutyCycle(BLEDevice central, uint8_t currentLedDutyCycle) {
+  if (!central) {
+    return;
+  }
+  if (!central.connected()) {
+    return;
+  }
 
-      uint8_t batteryLevel = 82;
-      if (batteryLevel != previousBatteryLevel) {
-        previousBatteryLevel = batteryLevel;
-        batteryLevelCharacteristic.writeValue(batteryLevel);
-      }
+  if (leftLightDutyCycleCharacteristic.written()) {
+    uint8_t ledDimmValue;
+    ledService.turnOnByDutyCycle(leftLightDutyCycleCharacteristic.value());
+  }
+}
 
-      if (leftLightDutyCycleCharacteristic.written()) {
-        uint8_t ledDimmValue;
-        ledService.turnOnByDutyCycle(leftLightDutyCycleCharacteristic.value());
-      }
-    }
+void bleSendBattery(BLEDevice central, uint8_t batteryVoltage) {
+  if (!central) {
+    return;
+  }
+  if (!central.connected()) {
+    return;
+  }
+
+  uint8_t batteryLevel = 82;
+  if (batteryLevel != previousBatteryLevel) {
+    previousBatteryLevel = batteryLevel;
+    batteryLevelCharacteristic.writeValue(batteryLevel);
+  }
+
+  if (batteryVoltage != previousBatteryVoltage) {
+    previousBatteryVoltage = batteryVoltage;
+    batteryVoltageCharacteristic.writeValue(batteryVoltage);
   }
 }
 
 void loop() {
   int batteryLevel;
+  uint8_t batteryVoltage;
   uint8_t currentDutyCycle;
+  uint32_t batteryVoltageRaw;
+  // ADC_LSB =  3300 * 1000 / 4095;
+  // double_t VOLTAGE_DIVIDER =  12200 / 2200;
+
+  // analogReadResolution(12);
 
   ledService.controlLed();
 
@@ -96,10 +125,14 @@ void loop() {
 
   if (shortTimedService.isTimeSlotActive()) {
     currentDutyCycle = ledService.getCurrentDutyCycle();
-    handleBLE(central, currentDutyCycle);
+    bleSendDutyCycle(central, currentDutyCycle);
   }
 
   if (longTimedService.isTimeSlotActive()) {
     blinkLED();
+    batteryVoltageRaw = analogRead(A0);
+    batteryVoltage = ((((batteryVoltageRaw)*12200) / 1023) * 3300) / 2200 / 100;
+    bleSendBattery(central, batteryVoltage);
+    Serial.println(batteryVoltage);
   }
 }
