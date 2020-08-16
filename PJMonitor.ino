@@ -114,10 +114,6 @@ void loop() {
   uint8_t batteryVoltage;
   uint8_t currentDutyCycle;
   uint32_t batteryVoltageRaw;
-  // ADC_LSB =  3300 * 1000 / 4095;
-  // double_t VOLTAGE_DIVIDER =  12200 / 2200;
-
-  // analogReadResolution(12);
 
   ledService.controlLed();
 
