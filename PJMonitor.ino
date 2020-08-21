@@ -36,7 +36,6 @@ BLEUnsignedCharCharacteristic
 
 void bleInit() {
   if (!BLE.begin()) {
-    Serial.println("Failed to initialize BLE!");
     while (1)
       ;
   }
@@ -58,10 +57,8 @@ void bleInit() {
 }
 
 void setup() {
-  Serial.begin(9600);
-  Serial.println("Serial initalized");
-
   pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
 
   bleInit();
 }
@@ -125,10 +122,8 @@ void loop() {
   }
 
   if (longTimedService.isTimeSlotActive()) {
-    blinkLED();
-    batteryVoltageRaw = analogRead(A0);
+    batteryVoltageRaw = analogRead(A2);
     batteryVoltage = ((((batteryVoltageRaw)*12200) / 1023) * 3300) / 2200 / 100;
     bleSendBattery(central, batteryVoltage);
-    Serial.println(batteryVoltage);
   }
 }
